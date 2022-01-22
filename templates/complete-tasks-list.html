@@ -1,0 +1,29 @@
+<h2>
+    Complete tasks
+</h2>
+{% if tasks | count == 0 %}
+    <em>None</em>
+{% else %}
+<table>
+    <tr>
+        <th class='task'>Task</th>
+        <th class='date'>Completed on</th>
+        <th class='edit'></th>
+        <th class='toggle'></th>
+    </tr>
+{% for task in tasks %}
+    <tr>
+        <td>{{task.description | safe}}</td>
+        <td>{{task.completed_on | date}}</td>
+        <td><a href="/task/{{task.id}}/view">view</a></td>
+        <td>
+            <form method="post" action="/task/{{task.id}}/undo/">
+                <button type="submit">
+                    undo
+                </button>
+            </form>
+        </td>
+    </tr>
+{% endfor %}
+</table>
+{% endif %}

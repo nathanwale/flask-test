@@ -1,0 +1,26 @@
+{% if tasks | count == 0 %}
+    <em>Add a task to begin</em>
+{% else %}
+    <table>
+        <tr>
+            <th class='task'>Task</th>
+            <th class='date'>Created</th>
+            <th class='edit'></th>
+            <th class='toggle'></th>
+        </tr>
+    {% for task in tasks %}
+        <tr>
+            <td>{{task.description | safe}}</td>
+            <td>{{task.created | date}}</td>
+            <td><a href="/task/{{task.id}}/view">view</a></td>
+            <td>
+                <form method="post" action="/task/{{task.id}}/complete/">
+                    <button type="submit">
+                        done!
+                    </button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endif %}

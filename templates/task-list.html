@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+    <section class='new-task'>
+        {% include 'task-form.html' %}
+    </section>
+    {% with tasks = incomplete_tasks %}
+    <section class='incomplete'>
+        {% include "incomplete-tasks-list.html" %}
+    </section>
+    {% endwith %}
+    <hr>
+    {% with tasks = complete_tasks %}
+    <section class='complete'>
+        {% include "complete-tasks-list.html" %}
+    </section>
+    {% endwith %}
+{% endblock  %}

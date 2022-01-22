@@ -1,43 +1,74 @@
-from crypt import methods
-from urllib import response
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, redirect, request
+import data
+
+
 app = Flask(__name__)
 
-@app.route('/getmsg/', methods=['GET'])
-def respond():
-    name = request.args.get('name', None)
-    print(f"Got name: {name}")
-    response = {}
+#
+# Form for new tasks
+#
+@app.route('/task/new', methods=['GET'])
+def task_form():
+    return render_template('task-form.html')
 
-    if not name:
-        response['ERROR'] = "No name found"
-    elif str(name).isdigit():
-        response['ERROR'] = f'Name cannot be numeric. Name used: "{name}"'
-    else:
-        response['MESSAGE'] = f"Welcome, <b>{name}</b>, to the site!"
-    return jsonify(response)
+#
+# Create a task
+#
+@app.route('/task/create', methods=['POST'])
+def create_task():
+    description = request.form['description']
+    data.create_task(description)
+    return redirect('/')
 
+#
+# View a task
+#
+@app.route('/task/<id>/view/', methods=['GET'])
+def view_task(id):
+    task = data.task_by_id(id)
+    return render_template('task.html', task=task)
 
-@app.route('/post/', methods=['POST'])
-def post_something():
-    name = request.form.get('name')
-    print(name)
-    data = {"name": name}
-    if name:
-        data.update({
-            "Message": f"Welcome {name}, to our server!",
-            "METHOD": "POST"
-        })
-    else:
-        data.update({
-            "ERROR": "No name posted" 
-        })
-    return jsonify(data)
-    
+#
+# View all tasks
+#    
 @app.route('/')
-def index():
-    return "<h1>Test success!</h1>"
+@app.route('/tasks/', methods=['GET'])
+def view_tasks():
+    incomplete_tasks = data.incomplete_tasks()
+    complete_tasks = data.complete_tasks()
+    return render_template(
+        'task-list.html', 
+        incomplete_tasks=incomplete_tasks,
+        complete_tasks=complete_tasks)
 
+#
+# Mark as done
+#
+@app.route('/task/<id>/complete/', methods=['POST'])
+def mark_task_complete(id):
+    data.mark_task_complete(id)
+    return redirect('/')
+
+#
+# Mark as incomplete
+#
+@app.route('/task/<id>/undo/', methods=['POST'])
+def mark_task_incomplete(id):
+    data.mark_task_incomplete(id)
+    return redirect('/')
+
+#
+# Date filter
+#
+@app.template_filter('date')
+def datetime_format(value, format="%b %d %Y"):
+    return value.strftime(format)
+
+
+
+#
+# Run
+#
 if __name__ == '__main__':
     # Threaded option to enable multiple instances for multiple user access support
-    app.run(threaded=True, port=8080)
+    app.run(threaded=True, port=8080, debug=True)
