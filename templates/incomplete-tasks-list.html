@@ -12,8 +12,8 @@
         <tr>
             <td>{{task.description | safe}}</td>
             <td>{{task.created | date}}</td>
-            <td><a href="/task/{{task.id}}/view">view</a></td>
-            <td>
+            <td class='edit'><a href="/task/{{task.id}}/edit">edit</a></td>
+            <td class='toggle'>
                 <form method="post" action="/task/{{task.id}}/complete/">
                     <button type="submit">
                         done!

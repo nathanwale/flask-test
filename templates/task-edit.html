@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<section class='edit-task'>
+    <h2>
+        Edit task
+    </h2>
+    <form class="edit-task" action="/task/{{task.id}}/update" method="post">
+
+        <textarea name="description" rows=3 cols=20>{{task.description}}</textarea>
+        <button type="submit">Update</button>
+    </form>
+</section>
+{% endblock  %}

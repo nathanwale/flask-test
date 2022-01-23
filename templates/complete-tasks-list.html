@@ -7,7 +7,7 @@
 <table>
     <tr>
         <th class='task'>Task</th>
-        <th class='date'>Completed on</th>
+        <th class='date'>Completed</th>
         <th class='edit'></th>
         <th class='toggle'></th>
     </tr>
@@ -15,8 +15,8 @@
     <tr>
         <td>{{task.description | safe}}</td>
         <td>{{task.completed_on | date}}</td>
-        <td><a href="/task/{{task.id}}/view">view</a></td>
-        <td>
+        <td class='edit'><a href="/task/{{task.id}}/edit">edit</a></td>
+        <td class='toggle'>
             <form method="post" action="/task/{{task.id}}/undo/">
                 <button type="submit">
                     undo

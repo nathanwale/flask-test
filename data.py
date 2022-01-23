@@ -41,3 +41,6 @@ def mark_task_complete(id):
 
 def mark_task_incomplete(id):
     db.procedure("undo_task", [id])
+
+def update_task_description(id, description):
+    db,db.procedure("redescribe_task", [id, description])

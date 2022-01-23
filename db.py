@@ -21,7 +21,8 @@ def query(sql, params=[]):
 def procedure(procname, params=[]):
     db = connect_to_db()
     cursor = db.cursor()
-    sql = f"call {procname}(%s)"
+    arity = ", ".join(["%s"] * len(params))
+    sql = f"call {procname}({arity})"
     cursor.execute(sql, params)
     db.commit()
     cursor.close()

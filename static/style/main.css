@@ -14,11 +14,13 @@ section.new-task {
     background-color: #666;
 }
 
-section.incomplete {
+section.incomplete,
+section.edit-task {
     background-color: white;
 }
 
 form.new-task,
+form.edit-task,
 table {
     max-width: 50em;
     margin: 0 auto;
@@ -32,7 +34,11 @@ h2 {
     margin: 0;
     text-align: center;
     font-size: 1em;
-    color: white;
+    color: #666;
+}
+
+section.edit-task {
+    margin-top: 2em;
 }
 
 table {
@@ -47,7 +53,8 @@ hr {
     display: none;
 }
 
-form.new-task {
+form.new-task,
+form.edit-task {
     display: flex;
     align-items: flex-end;
     gap: 10px;
@@ -57,11 +64,13 @@ form.new-task label {
     display: none;
 }
 
-form.new-task button {
+form.new-task button,
+form.edit-task button {
     flex: 1
 }
 
-form.new-task textarea {
+form.new-task textarea,
+form.edit-task textarea {
     flex: 9;
 }
 
@@ -83,6 +92,10 @@ th.date {
 
 th.edit {
     width: 5em;
+}
+
+td.edit {
+    text-align: center;
 }
 
 th.toggle {

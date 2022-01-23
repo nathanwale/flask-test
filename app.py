@@ -58,6 +58,25 @@ def mark_task_incomplete(id):
     return redirect('/')
 
 #
+# Edit task
+#
+@app.route('/task/<id>/edit/', methods=['GET'])
+def edit_task(id):
+    task = data.task_by_id(id)
+    print(f"Editing task: {task.description}")
+    return render_template('task-edit.html', task=task)
+
+#
+# Update task
+#
+@app.route('/task/<id>/update', methods=['POST'])
+def update_task(id):
+    description = request.form['description']
+    task = data.task_by_id(id)
+    data.update_task_description(id, description)
+    return redirect('/')
+
+#
 # Date filter
 #
 @app.template_filter('date')
