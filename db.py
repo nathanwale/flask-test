@@ -1,29 +1,32 @@
-import psycopg2
+from sqlalchemy import create_engine, text
 import os
 
-def connect_to_db():
-    """ 
-    Connect to DB
-    """
-    database_url = os.environ.get('DATABASE_URL', 'postgres://localhost/flask_test')
-    conn = psycopg2.connect(database_url, sslmode='allow')
-    return conn
+database_url = os.environ.get('DATABASE_URL', 'postgresql://localhost/flask_test')
+engine = create_engine(database_url, echo=True, future=True)
 
-def query(sql, params=[]):
-    db = connect_to_db()
-    cursor = db.cursor()
-    cursor.execute(sql, params)
-    rows = cursor.fetchall()
-    cursor.close()
-    db.close()
-    return rows
+#
+# Run a DB query
+#
+def query(sql, params={}):
+    with engine.connect() as conn:
+        result = conn.execute(
+            text(sql),
+            params
+        )
+        
+    return result.all()
 
-def procedure(procname, params=[]):
-    db = connect_to_db()
-    cursor = db.cursor()
-    arity = ", ".join(["%s"] * len(params))
-    sql = f"call {procname}({arity})"
-    cursor.execute(sql, params)
-    db.commit()
-    cursor.close()
-    db.close()
+
+#
+# Call a db Procedure
+#
+def procedure(procname, params={}):
+    with engine.begin() as connection:
+        arity = ", ".join(f":{k}" for k in params.keys())
+        sql = f"call {procname}({arity})"
+        result = connection.execute(
+            text(sql),
+            params
+        )
+        connection.commit()
+    return result

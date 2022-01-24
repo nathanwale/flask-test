@@ -15,7 +15,7 @@ def incomplete_tasks():
     return tasks_from_db_rows(rows)
 
 def task_by_id(id):
-    rows = db.query("select * from Tasks where id = %s", [id])
+    rows = db.query("select * from Tasks where id = :id", {'id': id})
     return task_from_db_row(rows[0])
 
 
@@ -37,10 +37,14 @@ def create_task(description):
     db.procedure("new_task", [description])
 
 def mark_task_complete(id):
-    db.procedure("complete_task", [id])
+    db.procedure("complete_task", {'id': id})
 
 def mark_task_incomplete(id):
-    db.procedure("undo_task", [id])
+    db.procedure("undo_task", {'id': id})
 
 def update_task_description(id, description):
-    db,db.procedure("redescribe_task", [id, description])
+    params = {
+        'id': id,
+        'description': description
+    }
+    db.procedure("redescribe_task", params)
