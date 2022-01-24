@@ -34,7 +34,10 @@ def task_from_db_row(row):
     )
 
 def create_task(description):
-    db.procedure("new_task", [description])
+    params = {
+        'description': description
+    }
+    db.procedure("new_task", params)
 
 def mark_task_complete(id):
     db.procedure("complete_task", {'id': id})
