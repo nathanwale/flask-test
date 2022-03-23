@@ -1,53 +1,39 @@
-from asyncio import Task
 import db
-import models
+from datetime import datetime
+from models import Task
+from sqlalchemy import select
 
 def all_tasks():
-    rows = db.query("select * from Tasks order by created desc")
-    return tasks_from_db_rows(rows)
+    statement = select(Task)
+    return db.run(statement)
 
 def complete_tasks():
-    rows = db.query("select * from CompleteTasks")
-    return tasks_from_db_rows(rows)
+    statement = select(Task).filter_by(done = True).order_by(Task.completed_on.desc())
+    return db.run(statement)
 
 def incomplete_tasks():
-    rows = db.query("select * from IncompleteTasks")
-    return tasks_from_db_rows(rows)
+    statement = select(Task).filter_by(done = False).order_by(Task.created.desc())
+    return db.run(statement)
 
 def task_by_id(id):
-    rows = db.query("select * from Tasks where id = :id", {'id': id})
-    return task_from_db_row(rows[0])
+    return db.get(Task, id)
 
-
-def tasks_from_db_rows(rows):
-    return [task_from_db_row(row) for row in rows]
-
-
-def task_from_db_row(row):
-    (done, description, created, completed_on, id) = row
-    return models.Task(
-        id = id,
-        description = description,
-        done = done,
-        completed_on = completed_on,
-        created = created
-    )
 
 def create_task(description):
-    params = {
-        'description': description
-    }
-    db.procedure("new_task", params)
+    task = Task(description=description)
+    db.add(task)
+
 
 def mark_task_complete(id):
-    db.procedure("complete_task", {'id': id})
+    with db.update(Task, id) as task:
+        task.done = True 
+        task.completed_on = datetime.now()
 
 def mark_task_incomplete(id):
-    db.procedure("undo_task", {'id': id})
+    with db.update(Task, id) as task:
+        task.done = False 
+        task.completed_on = None
 
 def update_task_description(id, description):
-    params = {
-        'id': id,
-        'description': description
-    }
-    db.procedure("redescribe_task", params)
+    with db.update(Task, id) as task:
+        task.description = description
